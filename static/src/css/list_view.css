@@ -1,0 +1,4 @@
+.o_list_view th[data-name="bei"],
+.o_list_view td[name="bei"] {
+    text-align: right !important;
+}

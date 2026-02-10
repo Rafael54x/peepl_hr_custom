@@ -1,0 +1,29 @@
+.chart-container {
+    height: 350px;
+    max-width: 350px;
+    margin: 0 auto;
+    position: relative;
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        height: 250px;
+        max-width: 250px;
+    }
+    
+    .recruitment-dashboard .card-body {
+        padding: 10px !important;
+    }
+    
+    .recruitment-dashboard .table {
+        font-size: 0.7rem !important;
+    }
+    
+    .recruitment-dashboard .form-control {
+        font-size: 0.8rem;
+    }
+    
+    .recruitment-dashboard .badge {
+        font-size: 0.6rem !important;
+    }
+}

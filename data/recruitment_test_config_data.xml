@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="test_config_vgr" model="recruitment.test.config">
+            <field name="name">VGR</field>
+            <field name="code">vgr</field>
+            <field name="sequence">1</field>
+            <field name="active">True</field>
+        </record>
+        
+        <record id="test_config_ngr" model="recruitment.test.config">
+            <field name="name">NGR</field>
+            <field name="code">ngr</field>
+            <field name="sequence">2</field>
+            <field name="active">True</field>
+        </record>
+        
+        <record id="test_config_lag" model="recruitment.test.config">
+            <field name="name">LAG</field>
+            <field name="code">lag</field>
+            <field name="sequence">3</field>
+            <field name="active">True</field>
+        </record>
+        
+        <record id="test_config_che" model="recruitment.test.config">
+            <field name="name">CHE</field>
+            <field name="code">che</field>
+            <field name="sequence">4</field>
+            <field name="active">True</field>
+        </record>
+        
+        <record id="test_config_bei" model="recruitment.test.config">
+            <field name="name">BEI</field>
+            <field name="code">bei</field>
+            <field name="sequence">5</field>
+            <field name="active">True</field>
+        </record>
+        
+        <record id="test_config_vcr" model="recruitment.test.config">
+            <field name="name">VCR</field>
+            <field name="code">vcr</field>
+            <field name="sequence">6</field>
+            <field name="active">True</field>
+        </record>
+        
+        <record id="test_config_ncr" model="recruitment.test.config">
+            <field name="name">NCR</field>
+            <field name="code">ncr</field>
+            <field name="sequence">7</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

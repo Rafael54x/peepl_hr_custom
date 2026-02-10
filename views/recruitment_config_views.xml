@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Status Configuration Views -->
+    <record id="recruitment_status_config_view_list" model="ir.ui.view">
+        <field name="name">recruitment.status.config.list</field>
+        <field name="model">recruitment.status.config</field>
+        <field name="arch" type="xml">
+            <list string="Status Configuration" editable="top">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_recruitment_status_config" model="ir.actions.act_window">
+        <field name="name">Status Configuration</field>
+        <field name="res_model">recruitment.status.config</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+        id="menu_recruitment_status_config"
+        name="Recruitment Status"
+        parent="hr_recruitment.menu_hr_recruitment_configuration"
+        action="action_recruitment_status_config"
+        sequence="51"/>
+
+    <menuitem
+        id="menu_recruitment_custom_field"
+        name="Custom Fields"
+        parent="hr_recruitment.menu_hr_recruitment_configuration"
+        action="action_recruitment_custom_field"
+        sequence="52"/>
+
+</odoo>

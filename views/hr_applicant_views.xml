@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ===================================================== -->
+    <!-- KANBAN VIEW -->
+    <!-- ===================================================== -->
+    <record id="hr_applicant_kanban_assessment" model="ir.ui.view">
+        <field name="name">hr.applicant.kanban.assessment</field>
+        <field name="model">hr.applicant</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="recruitment_phase">
+                <field name="partner_name"/>
+                <field name="email_from"/>
+                <field name="job_id"/>
+                <field name="recruitment_phase"/>
+                <field name="hire_decision"/>
+                <field name="vgr"/>
+                <field name="ngr"/>
+                <field name="lag"/>
+                <field name="che"/>
+                <field name="bei"/>
+                <field name="vcr"/>
+                <field name="ncr"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <strong><field name="partner_name"/></strong>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <field name="email_from"/>
+                                    <div><field name="job_id"/></div>
+                                    <div class="mt-2">
+                                        <span class="badge badge-pill" t-att-class="record.hire_decision.raw_value == 'on_progress' ? 'badge-primary' : record.hire_decision.raw_value == 'recommended' ? 'badge-success' : record.hire_decision.raw_value == 'offer_made' ? 'badge-warning' : 'badge-danger'">
+                                            <field name="hire_decision"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- SEARCH VIEW -->
+    <!-- ===================================================== -->
+    <record id="hr_applicant_search_assessment" model="ir.ui.view">
+        <field name="name">hr.applicant.search.assessment</field>
+        <field name="model">hr.applicant</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_name"/>
+                <field name="email_from"/>
+                <field name="job_id"/>
+                <field name="recruitment_phase"/>
+                <field name="hire_decision"/>
+                <separator/>
+                <filter string="Recruitment Phase" name="group_by_recruitment_phase" context="{'group_by': 'recruitment_phase'}"/>
+                <filter string="Hire Decision" name="group_by_hire_decision" context="{'group_by': 'hire_decision'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- LIST VIEW - EDITABLE -->
+    <!-- ===================================================== -->
+    <record id="crm_case_tree_view_job_inherit_custom" model="ir.ui.view">
+        <field name="name">crm.case.tree.view.job.inherit.custom</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.crm_case_tree_view_job"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="editable">top</attribute>
+            </xpath>
+            <xpath expr="//field[@name='job_id']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='matching_score']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='categ_ids']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='priority']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='stage_id']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_name']" position="after">
+                <field name="email_from" required="1"/>
+                <field name="job_id" required="1" optional="show"/>
+                <field name="contract_type_id" optional="show"/>
+                <field name="vgr" optional="show" width="60px"/>
+                <field name="ngr" optional="show" width="60px"/>
+                <field name="lag" optional="show" width="60px"/>
+                <field name="che" optional="show" width="60px"/>
+                <field name="bei" optional="show" width="60px" class="text-end"/>
+                <field name="vcr" optional="show" width="60px"/>
+                <field name="ncr" optional="show" width="60px"/>
+                <field name="last_test" optional="show" string="Date of Online Test"/>
+                <field name="stage_id" string="Recruitment Phase" readonly="hire_decision == 'do_not_pursue'" optional="show"/>
+                <field name="hire_decision" string="Recruitment Status" optional="show"/>
+                <field name="applicant_notes" string="Notes" optional="show"/>
+                <field name="meets_staff_requirements" readonly="1" optional="show" width="80px"/>
+                <field name="create_date" string="Applied on" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- FORM VIEW - ENHANCED -->
+    <!-- ===================================================== -->
+    <record id="hr_applicant_form_assessment" model="ir.ui.view">
+        <field name="name">hr.applicant.form.assessment</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+        <field name="arch" type="xml">
+            <header position="inside">
+                <field name="recruitment_phase" widget="statusbar" statusbar_visible="online_passed,ai_interview,user_interview,psc_interview" readonly="hire_decision == 'do_not_pursue'"/>
+            </header>
+            <xpath expr="//field[@name='company_id']" position="after">
+                <field name="contract_type_id"/>
+            </xpath>
+            <xpath expr="//field[@name='stage_id']" position="attributes">
+                <attribute name="readonly">hire_decision == 'do_not_pursue'</attribute>
+            </xpath>
+            <notebook position="inside">
+                <page string="Assessment" name="assessment">
+                    <group>
+                        <group string="Recruitment Info">
+                            <field name="hire_decision"/>
+                            <field name="last_test"/>
+                        </group>
+                        <group string="Assessment Scores">
+                            <field name="vgr"/>
+                            <field name="ngr"/>
+                            <field name="lag"/>
+                            <field name="che"/>
+                            <field name="bei"/>
+                            <field name="vcr"/>
+                            <field name="ncr"/>
+                        </group>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- GRAPH VIEW - PIE CHART -->
+    <!-- ===================================================== -->
+    <record id="hr_applicant_graph_phase" model="ir.ui.view">
+        <field name="name">hr.applicant.graph.phase</field>
+        <field name="model">hr.applicant</field>
+        <field name="arch" type="xml">
+            <graph type="pie" string="Recruitment Phase">
+                <field name="recruitment_phase" type="row"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="hr_applicant_graph_decision" model="ir.ui.view">
+        <field name="name">hr.applicant.graph.decision</field>
+        <field name="model">hr.applicant</field>
+        <field name="arch" type="xml">
+            <graph type="pie" string="Hire Decision">
+                <field name="hire_decision" type="row"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- PIVOT VIEW -->
+    <!-- ===================================================== -->
+    <record id="hr_applicant_pivot_assessment" model="ir.ui.view">
+        <field name="name">hr.applicant.pivot.assessment</field>
+        <field name="model">hr.applicant</field>
+        <field name="arch" type="xml">
+            <pivot string="Assessment Statistics">
+                <field name="recruitment_phase" type="row"/>
+                <field name="hire_decision" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- KANBAN VIEW - ADD HIRE DECISION -->
+    <!-- ===================================================== -->
+    <record id="hr_kanban_view_applicant_hire_decision" model="ir.ui.view">
+        <field name="name">hr.applicant.kanban.hire.decision</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_kanban_view_applicant"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <field name="hire_decision"/>
+            </xpath>
+            <xpath expr="//t[@t-name='card']//field[@name='partner_name']" position="replace">
+                <div class="d-flex align-items-center justify-content-between">
+                    <field t-if="record.partner_name.raw_value" class="fw-bold fs-5" name="partner_name"/>
+                    <field name="hire_decision" widget="badge" decoration-primary="hire_decision == 'on_progress'" decoration-success="hire_decision == 'recommended'" decoration-warning="hire_decision == 'offer_made'" decoration-danger="hire_decision == 'do_not_pursue'"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
