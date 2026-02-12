@@ -11,6 +11,7 @@
                 <field name="field_type"/>
                 <field name="anchor_field" string="Position"/>
                 <field name="position" string="Insert"/>
+                <field name="validation_active" widget="boolean_toggle"/>
                 <field name="description"/>
             </list>
         </field>
@@ -34,7 +35,6 @@
                         <group>
                             <field name="sequence" invisible="1"/>
                             <field name="field_type"/>
-                            <field name="active"/>
                         </group>
                         <group>
                             <field name="anchor_field"/>
@@ -49,6 +49,25 @@
                         <field name="relation_model" invisible="field_type != 'many2one'" 
                                placeholder="e.g. res.partner" nolabel="1"/>
                     </group>
+                    
+                    <group string="Validation Rules">
+                        <group>
+                            <field name="validation_active"/>
+                            <field name="validation_operator" invisible="not validation_active"/>
+                            <field name="default_decision" invisible="not validation_active" string="Default Decision"/>
+                        </group>
+                        <group>
+                            <field name="validation_value" invisible="not validation_active" placeholder="e.g., 60 or PT X"/>
+                            <field name="target_decision" invisible="not validation_active"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert" invisible="not validation_active" style="margin: 0 16px;">
+                        <strong>Examples:</strong><br/>
+                        • <b>Single value:</b> 60 or "Passed"<br/>
+                        • <b>Multiple values (in/not in):</b> A,B,C or "Failed,Rejected"<br/>
+                        • <b>Range (between):</b> 50,100 or "B1,C2"<br/>
+                        • <b>Ordered comparison (&gt;=, &lt;=):</b> For dropdown, uses order in Selection Values (e.g., B1 &gt;= means B1,B2,C1,C2)
+                    </div>
                 </sheet>
                 <footer>
                     <div class="o_form_statusbar d-flex justify-content-between py-2">

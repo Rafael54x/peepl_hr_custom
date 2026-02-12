@@ -20,9 +20,9 @@ building on the existing participant management system.
         'security/ir.model.access.csv',
         'data/recruitment_test_config_data.xml',
         'views/hr_applicant_views.xml',
+        'views/recruitment_custom_field_views.xml',
         'views/recruitment_config_views.xml',
         'views/recruitment_dashboard_views.xml',
-        'views/recruitment_custom_field_views.xml',
     ],
     'assets': {
         'web.assets_backend': [
@@ -36,7 +36,7 @@ building on the existing participant management system.
     'installable': True,
     'auto_install': False,
     'application': False,
-    'post_init_hook': 'post_init_hook',
+
     'uninstall_hook': None,
     'external_dependencies': {
         'python': [],

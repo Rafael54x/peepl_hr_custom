@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import operator
 from lxml.builder import E
 from odoo import api, fields, models, _
 from odoo.tools import make_index_name, create_index
@@ -31,24 +32,33 @@ class RecruitmentCustomField(models.Model):
         ('partner_name', 'Name'),
         ('job_id', 'Job Position'),
         ('contract_type_id', 'Contract Type'),
-        ('vgr', 'VGR'),
-        ('ngr', 'NGR'),
-        ('lag', 'LAG'),
-        ('che', 'CHE'),
-        ('bei', 'BEI'),
-        ('vcr', 'VCR'),
-        ('ncr', 'NCR'),
         ('last_test', 'Date of Online Test'),
         ('stage_id', 'Recruitment Phase'),
         ('hire_decision', 'Recruitment Status'),
         ('applicant_notes', 'Notes'),
-        ('meets_staff_requirements', 'Meets Requirements'),
         ('create_date', 'Applied on'),
-    ], string='Position', default='ncr', required=True)
+    ], string='Position', default='last_test', required=True)
     position = fields.Selection([
         ('before', 'Before'),
         ('after', 'After'),
     ], string='Insert', default='after', required=True)
+    
+    # Validation Rules
+    validation_active = fields.Boolean('Enable Auto-Decision', help='Auto-update hire_decision based on field value')
+    validation_operator = fields.Selection([
+        ('=', 'Equal to'),
+        ('!=', 'Not Equal to'),
+        ('>', 'Greater than'),
+        ('>=', 'Greater or Equal'),
+        ('<', 'Less than'),
+        ('<=', 'Less or Equal'),
+        ('in', 'In (comma separated)'),
+        ('not in', 'Not In (comma separated)'),
+        ('between', 'Between (min,max)'),
+    ], string='Operator')
+    validation_value = fields.Char('Threshold Value', help='Value to compare. Examples:\n- Single: 60\n- Multiple: A,B,C\n- Range: 50,100')
+    target_decision = fields.Many2one('recruitment.status.config', string='Set Decision To', domain=[('active', '=', True)], ondelete='set null')
+    default_decision = fields.Many2one('recruitment.status.config', string='Default Decision', domain=[('active', '=', True)], ondelete='set null', help='Set this decision if no validation rule matches')
 
     def _column_name(self):
         self.ensure_one()
@@ -116,7 +126,7 @@ class RecruitmentCustomField(models.Model):
 
     def write(self, vals):
         res = super().write(vals)
-        if any(key in vals for key in ['name', 'field_type', 'selection_values', 'relation_model', 'active']):
+        if any(key in vals for key in ['name', 'field_type', 'selection_values', 'relation_model', 'active', 'anchor_field', 'position', 'sequence']):
             try:
                 self._sync_all_template_columns()
                 self.env.registry.clear_cache('stable')
@@ -209,21 +219,18 @@ class RecruitmentCustomFieldMixin(models.AbstractModel):
     def _patch_view(self, arch, view, view_type):
         try:
             if not self.env.context.get("studio"):
-                templates = self.env['recruitment.custom.field'].search([('active', '=', True)], order='sequence')
+                templates = self.env['recruitment.custom.field'].search([('active', '=', True)], order='sequence, id')
                 
                 if view_type == 'list':
+                    # Track inserted fields to avoid duplicates
+                    inserted = set()
+                    
                     for template in templates:
                         fname = template._column_name()
-                        if fname not in self._fields:
+                        if fname not in self._fields or fname in inserted:
                             continue
                         
-                        # Try to find anchor field in the view
                         anchor_node = arch.find(f'.//field[@name="{template.anchor_field}"]')
-                        
-                        # Fallback: if anchor not found, use create_date as last field
-                        if anchor_node is None:
-                            anchor_node = arch.find('.//field[@name="create_date"]')
-                        
                         if anchor_node is None:
                             continue
                         
@@ -245,13 +252,17 @@ class RecruitmentCustomFieldMixin(models.AbstractModel):
                             anchor_node.addprevious(new_field)
                         else:
                             anchor_node.addnext(new_field)
+                        
+                        inserted.add(fname)
                 
                 elif view_type == 'form':
                     page_assessment = arch.find('.//page[@name="assessment"]')
                     if page_assessment is not None:
+                        inserted = set()
+                        
                         for template in templates:
                             fname = template._column_name()
-                            if fname not in self._fields:
+                            if fname not in self._fields or fname in inserted:
                                 continue
                             
                             anchor_node = page_assessment.find(f'.//field[@name="{template.anchor_field}"]')
@@ -272,10 +283,131 @@ class RecruitmentCustomFieldMixin(models.AbstractModel):
                                 anchor_node.addprevious(new_field)
                             else:
                                 anchor_node.addnext(new_field)
+                            
+                            inserted.add(fname)
         except Exception:
             pass
         
         return arch, view
+
+
+    def _apply_dynamic_rules(self):
+        """Apply validation rules to update hire_decision"""
+        ops = {'=': operator.eq, '!=': operator.ne, '>': operator.gt, '>=': operator.ge, '<': operator.lt, '<=': operator.le}
+        
+        templates = self.env['recruitment.custom.field'].search([
+            ('active', '=', True),
+            ('validation_active', '=', True)
+        ])
+        
+        for record in self:
+            for template in templates:
+                fname = template._column_name()
+                if fname not in record or not record[fname]:
+                    # Set default decision if field has value and default is set
+                    if fname in record and template.default_decision:
+                        record.hire_decision = template.default_decision.code
+                    continue
+                
+                # Check if validation rule exists
+                if not template.validation_operator or not template.target_decision:
+                    # No validation rule, use default if set
+                    if template.default_decision:
+                        record.hire_decision = template.default_decision.code
+                    continue
+                
+                try:
+                    user_val = record[fname]
+                    rule_val = template.validation_value
+                    op = template.validation_operator
+                    rule_matched = False
+                    
+                    # Handle 'in' operator
+                    if op == 'in':
+                        values = [v.strip() for v in rule_val.split(',')]
+                        if template.field_type in ('integer', 'float'):
+                            values = [float(v) for v in values]
+                            user_val = float(user_val)
+                        if user_val in values:
+                            record.hire_decision = template.target_decision.code
+                            rule_matched = True
+                    
+                    # Handle 'not in' operator
+                    elif op == 'not in':
+                        values = [v.strip() for v in rule_val.split(',')]
+                        if template.field_type in ('integer', 'float'):
+                            values = [float(v) for v in values]
+                            user_val = float(user_val)
+                        if user_val not in values:
+                            record.hire_decision = template.target_decision.code
+                            rule_matched = True
+                    
+                    # Handle 'between' operator
+                    elif op == 'between':
+                        min_val, max_val = [v.strip() for v in rule_val.split(',')]
+                        if template.field_type in ('integer', 'float'):
+                            min_val, max_val = float(min_val), float(max_val)
+                            user_val = float(user_val)
+                            if min_val <= user_val <= max_val:
+                                record.hire_decision = template.target_decision.code
+                                rule_matched = True
+                        else:
+                            if template.selection_values:
+                                options = [v.strip() for v in template.selection_values.split('\n') if v.strip()]
+                                try:
+                                    min_idx = options.index(min_val)
+                                    max_idx = options.index(max_val)
+                                    user_idx = options.index(user_val)
+                                    if min_idx <= user_idx <= max_idx:
+                                        record.hire_decision = template.target_decision.code
+                                        rule_matched = True
+                                except ValueError:
+                                    pass
+                    
+                    # Standard operators for selection
+                    elif template.field_type == 'selection' and op in ('>', '>=', '<', '<='):
+                        if template.selection_values:
+                            options = [v.strip() for v in template.selection_values.split('\n') if v.strip()]
+                            try:
+                                user_idx = options.index(user_val)
+                                rule_idx = options.index(rule_val)
+                                if ops[op](user_idx, rule_idx):
+                                    record.hire_decision = template.target_decision.code
+                                    rule_matched = True
+                            except ValueError:
+                                pass
+                    
+                    # Standard operators for numeric
+                    else:
+                        if template.field_type in ('integer', 'float'):
+                            user_val = float(user_val)
+                            rule_val = float(rule_val)
+                        
+                        if ops[op](user_val, rule_val):
+                            record.hire_decision = template.target_decision.code
+                            rule_matched = True
+                    
+                    # If no rule matched, use default
+                    if not rule_matched and template.default_decision:
+                        record.hire_decision = template.default_decision.code
+                        
+                except:
+                    # On error, use default if set
+                    if template.default_decision:
+                        record.hire_decision = template.default_decision.code
+                    continue
+    
+    @api.model
+    def create(self, vals):
+        record = super().create(vals)
+        record._apply_dynamic_rules()
+        return record
+    
+    def write(self, vals):
+        res = super().write(vals)
+        if any(k.startswith('x_field') for k in vals.keys()):
+            self._apply_dynamic_rules()
+        return res
 
 
 class HrApplicant(models.Model):

@@ -57,7 +57,7 @@ class RecruitmentDashboard extends Component {
             
             // Build field list dynamically
             const baseFields = ["partner_name", "email_from", "job_id", "stage_id", "recruitment_phase", "hire_decision", 
-                 "vgr", "ngr", "lag", "che", "bei", "vcr", "ncr", "applicant_notes", "create_date", "last_test"];
+                 "applicant_notes", "create_date", "last_test"];
             
             const customFieldNames = customFields.map(f => `x_field${f.id}_value`);
             const allFields = [...baseFields, ...customFieldNames];
@@ -102,7 +102,7 @@ class RecruitmentDashboard extends Component {
     updateStats(candidates) {
         this.state.stats = {
             total: candidates.length,
-            assessed: candidates.filter(c => c.vgr || c.ngr || c.lag || c.che || c.vcr || c.ncr).length,
+            assessed: candidates.filter(c => c.last_test).length,
             onProgress: candidates.filter(c => c.hire_decision === 'on_progress').length,
             failed: candidates.filter(c => c.hire_decision === 'do_not_pursue').length
         };

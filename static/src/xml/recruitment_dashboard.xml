@@ -117,12 +117,6 @@
                                 <div class="d-flex justify-content-between align-items-center flex-wrap">
                                     <h5 class="mb-0">All Candidates</h5>
                                     <div class="d-flex gap-2 flex-wrap mt-2 mt-md-0">
-                                        <select class="form-control" style="width: 100px;" t-model="state.pagination.itemsPerPage" t-on-change="onItemsPerPageChange">
-                                            <option value="10">10 rows</option>
-                                            <option value="20">20 rows</option>
-                                            <option value="50">50 rows</option>
-                                            <option value="100">100 rows</option>
-                                        </select>
                                         <input type="text" class="form-control" placeholder="Search..." style="width: 250px;" t-model="state.searchText" t-on-input="onSearchInput"/>
                                         <select class="form-control" style="width: 150px;" t-model="state.filters.month" t-on-change="onMonthFilterChange">
                                             <option value="all">All Months</option>
@@ -143,6 +137,12 @@
                                             <option value="offer_made">Offer Made</option>
                                             <option value="do_not_pursue">Do Not Pursue</option>
                                         </select>
+                                        <select class="form-control" style="width: 100px;" t-model="state.pagination.itemsPerPage" t-on-change="onItemsPerPageChange">
+                                            <option value="10">10 rows</option>
+                                            <option value="20">20 rows</option>
+                                            <option value="50">50 rows</option>
+                                            <option value="100">100 rows</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -154,13 +154,6 @@
                                                 <th style="border: none; padding: 10px; cursor: pointer;" t-on-click="sortByName">Name ↕</th>
                                                 <th style="border: none; padding: 10px;">Email</th>
                                                 <th style="border: none; padding: 10px;">Job</th>
-                                                <th style="border: none; padding: 10px;">VGR</th>
-                                                <th style="border: none; padding: 10px;">NGR</th>
-                                                <th style="border: none; padding: 10px;">LAG</th>
-                                                <th style="border: none; padding: 10px;">CHE</th>
-                                                <th style="border: none; padding: 10px;">BEI</th>
-                                                <th style="border: none; padding: 10px;">VCR</th>
-                                                <th style="border: none; padding: 10px;">NCR</th>
                                                 <t t-foreach="state.customFields" t-as="field" t-key="field.id">
                                                     <th style="border: none; padding: 10px;" t-esc="field.name"/>
                                                 </t>
@@ -176,13 +169,6 @@
                                                     <td style="padding: 8px; border: none;" t-esc="candidate.partner_name"/>
                                                     <td style="padding: 8px; border: none;" t-esc="candidate.email_from"/>
                                                     <td style="padding: 8px; border: none;" t-esc="candidate.job_id[1]"/>
-                                                    <td style="padding: 8px; border: none;" t-esc="candidate.vgr"/>
-                                                    <td style="padding: 8px; border: none;" t-esc="candidate.ngr"/>
-                                                    <td style="padding: 8px; border: none;" t-esc="candidate.lag"/>
-                                                    <td style="padding: 8px; border: none;" t-esc="candidate.che"/>
-                                                    <td style="padding: 8px; border: none;" t-esc="this.getBeiValue(candidate.bei)"/>
-                                                    <td style="padding: 8px; border: none;" t-esc="candidate.vcr"/>
-                                                    <td style="padding: 8px; border: none;" t-esc="candidate.ncr"/>
                                                     <t t-foreach="state.customFields" t-as="field" t-key="field.id">
                                                         <td style="padding: 8px; border: none;" t-esc="candidate['x_field' + field.id + '_value'] || '-'"/>
                                                     </t>
