@@ -26,13 +26,13 @@
         name="Recruitment Status"
         parent="hr_recruitment.menu_hr_recruitment_configuration"
         action="action_recruitment_status_config"
-        sequence="51"/>
+        sequence="5"/>
 
     <menuitem
         id="menu_recruitment_custom_field"
         name="Custom Fields"
         parent="hr_recruitment.menu_hr_recruitment_configuration"
         action="action_recruitment_custom_field"
-        sequence="52"/>
+        sequence="6"/>
 
 </odoo>
