@@ -149,12 +149,9 @@ class RecruitmentCustomField(models.Model):
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'type': 'success',
-                'message': 'Field deleted. Page will reload...',
-                'next': {
-                    'type': 'ir.actions.client',
-                    'tag': 'reload',
-                },
+                'type': 'warning',
+                'message': 'Field deleted. Please refresh the page manually (F5) to avoid errors.',
+                'sticky': True,
             }
         }
 
@@ -172,7 +169,15 @@ class RecruitmentCustomField(models.Model):
     def action_refresh_page(self):
         return {
             'type': 'ir.actions.client',
-            'tag': 'reload',
+            'tag': 'display_notification',
+            'params': {
+                'type': 'success',
+                'message': 'Saved successfully. Page will reload...',
+                'next': {
+                    'type': 'ir.actions.client',
+                    'tag': 'reload',
+                },
+            }
         }
 
 
