@@ -103,7 +103,7 @@ class RecruitmentDashboard extends Component {
         this.state.stats = {
             total: candidates.length,
             assessed: candidates.filter(c => c.last_test).length,
-            onProgress: candidates.filter(c => c.hire_decision === 'on_progress').length,
+            onProgress: candidates.filter(c => c.hire_decision !== 'do_not_pursue').length,
             failed: candidates.filter(c => c.hire_decision === 'do_not_pursue').length
         };
     }

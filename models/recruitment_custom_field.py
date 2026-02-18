@@ -31,7 +31,6 @@ class RecruitmentCustomField(models.Model):
     anchor_field = fields.Selection([
         ('partner_name', 'Name'),
         ('job_id', 'Job Position'),
-        ('contract_type_id', 'Contract Type'),
         ('last_test', 'Date of Online Test'),
         ('stage_id', 'Recruitment Phase'),
         ('hire_decision', 'Recruitment Status'),

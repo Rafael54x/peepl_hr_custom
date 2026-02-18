@@ -7,7 +7,7 @@
                     <span class="sr-only">Loading...</span>
                 </div>
             </div>
-            <div t-else="" class="container-fluid p-4">
+            <div t-else="" class="container-fluid p-4" style="padding-bottom: 100px;">
                 <div class="row mb-4">
                     <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
                         <div class="card text-white rounded-3" style="background-color: #74c0fc;">
@@ -110,7 +110,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" style="margin-bottom: 50px;">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
