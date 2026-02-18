@@ -118,7 +118,7 @@
                     <group>
                         <group string="Recruitment Info">
                             <field name="hire_decision"/>
-                            <field name="last_test"/>
+                            <field name="last_test" string="Date of Online Test"/>
                         </group>
                     </group>
                 </page>

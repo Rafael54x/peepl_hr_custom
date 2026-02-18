@@ -93,7 +93,7 @@
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="mb-0">Hire Decisions</h5>
+                                <h5 class="mb-0">Recruitment Status</h5>
                             </div>
                             <div class="card-body text-center" style="height: 450px; position: relative; padding: 20px;">
                                 <div class="chart-container">
@@ -117,7 +117,10 @@
                                 <div class="d-flex justify-content-between align-items-center flex-wrap">
                                     <h5 class="mb-0">All Candidates</h5>
                                     <div class="d-flex gap-2 flex-wrap mt-2 mt-md-0">
-                                        <input type="text" class="form-control" placeholder="Search..." style="width: 250px;" t-model="state.searchText" t-on-input="onSearchInput"/>
+                                        <button t-if="this.hasActiveFilters()" class="btn btn-sm btn-outline-danger" t-on-click="clearAllFilters">
+                                            <i class="fa fa-times"/> Clear Filters
+                                        </button>
+                                        <input type="text" class="form-control" placeholder="Search by Name or Email..." style="width: 250px;" t-model="state.searchText" t-on-input="onSearchInput"/>
                                         <select class="form-control" style="width: 150px;" t-model="state.filters.month" t-on-change="onMonthFilterChange">
                                             <option value="all">All Months</option>
                                             <t t-foreach="this.getAvailableMonths()" t-as="month" t-key="month">

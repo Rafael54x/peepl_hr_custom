@@ -27,7 +27,6 @@ building on the existing participant management system.
     'assets': {
         'web.assets_backend': [
             'peepl_hr_custom/static/src/css/recruitment_dashboard.css',
-            'peepl_hr_custom/static/src/css/list_view.css',
             'peepl_hr_custom/static/src/js/recruitment_dashboard.js',
             'peepl_hr_custom/static/src/xml/recruitment_dashboard.xml',
         ],

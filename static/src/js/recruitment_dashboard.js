@@ -375,6 +375,21 @@ class RecruitmentDashboard extends Component {
         this.filterCandidates();
     }
 
+    clearAllFilters() {
+        this.state.searchText = '';
+        this.state.filters.phase = 'all';
+        this.state.filters.decision = 'all';
+        this.state.filters.month = 'all';
+        this.filterCandidates();
+    }
+
+    hasActiveFilters() {
+        return this.state.searchText || 
+               this.state.filters.phase !== 'all' || 
+               this.state.filters.decision !== 'all' || 
+               this.state.filters.month !== 'all';
+    }
+
     onPhaseFilterChange(ev) {
         this.state.filters.phase = ev.target.value;
         this.state.pagination.currentPage = 1;
