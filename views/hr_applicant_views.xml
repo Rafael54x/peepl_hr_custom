@@ -86,12 +86,11 @@
             <xpath expr="//field[@name='partner_name']" position="after">
                 <field name="email_from" required="1"/>
                 <field name="job_id" required="1" optional="show"/>
-                <field name="contract_type_id" optional="show"/>
+                <field name="contract_type_id" optional="hide"/>
                 <field name="last_test" optional="show" string="Date of Online Test"/>
                 <field name="stage_id" string="Recruitment Phase" readonly="hire_decision == 'do_not_pursue'" optional="show"/>
                 <field name="hire_decision" string="Recruitment Status" optional="show"/>
                 <field name="applicant_notes" string="Notes" optional="show"/>
-                <field name="create_date" string="Applied on" optional="hide"/>
             </xpath>
         </field>
     </record>
