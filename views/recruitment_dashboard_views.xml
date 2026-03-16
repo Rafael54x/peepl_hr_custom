@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Dashboard Action -->
-    <record id="action_recruitment_dashboard" model="ir.actions.client">
+
+    <!-- <record id="action_recruitment_dashboard" model="ir.actions.client">
         <field name="name">Recruitment Dashboard</field>
         <field name="tag">recruitment_dashboard</field>
     </record>
 
-    <!-- Recruitment Progress Action -->
     <record id="recruitment_progress_action" model="ir.actions.act_window">
         <field name="name">Recruitment Progress</field>
         <field name="res_model">hr.applicant</field>
@@ -19,10 +18,9 @@
         </field>
     </record>
 
-    <!-- Dashboard Menus -->
     <menuitem id="menu_recruitment_dashboard"
               name="Dashboard"
               parent="hr_recruitment.menu_hr_recruitment_root"
               action="action_recruitment_dashboard"
-              sequence="1"/>
+              sequence="1"/> -->
 </odoo>
